@@ -6,7 +6,7 @@
 /*   By: mocherqu <mocherqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/18 17:24:29 by mdaifi            #+#    #+#             */
-/*   Updated: 2021/06/26 17:07:39 by mocherqu         ###   ########.fr       */
+/*   Updated: 2021/06/27 13:53:22 by mocherqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,9 @@ typedef struct	s_var
 	int p[2];
 	char **tab;
 	char **path;
+	char *tmp;
+	char **tmp2;
+	char **tmp3;
 	pid_t pid;
 	pid_t pid2;
 }	t_var;

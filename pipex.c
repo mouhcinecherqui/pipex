@@ -6,7 +6,7 @@
 /*   By: mocherqu <mocherqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/18 17:24:08 by mdaifi            #+#    #+#             */
-/*   Updated: 2021/06/26 17:41:41 by mocherqu         ###   ########.fr       */
+/*   Updated: 2021/06/27 17:20:04 by mocherqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,17 +23,19 @@ void free_split(char **str)
 	}
 	free(str);
 }
-void free_split2(t_var *var)
-{
-	int i;
 
-	i = 0;
-	while (var->tab[i])
+void	ft_free_list(t_list *head)
+{
+	t_list	*tmp;
+
+	tmp = head;
+
+	while (head != NULL)
 	{
-		free(var->tab[i]);
-		i++;
+		tmp = head;
+		head = head->next;
+		free(tmp);
 	}
-	free(var->tab);
 }
 
 void ft_pipex(t_var *var)
@@ -58,14 +60,15 @@ int main(int argc, char **argv, char *env[])
 	if (argc == 5)
 	{
 		var = (t_var *)malloc(sizeof(t_var));
-		pipe1 = ft_lstnew(ft_split(argv[2], ' '));
-		ft_lstadd_back(&pipe1, ft_lstnew(ft_split(argv[3], ' ')));
+		var->tmp2 = ft_split(argv[2], ' ');
+		pipe1 = ft_lstnew(var->tmp2);
+		var->tmp3 = ft_split(argv[3], ' ');
+		ft_lstadd_back(&pipe1, ft_lstnew(var->tmp3));
 		var->tab = (char **)pipe1->content;
-		var->path = ft_split(env[6], ':');
+		var->tmp = ft_substr(env[6], 5, ft_strlen(env[6]));
+		var->path = ft_split(var->tmp, ':');
+		free(var->tmp);
 		var->str = var->path[0];
-		var->path[0] = NULL;
-		var->path[0] = ft_substr(var->str, 5, ft_strlen(var->str));
-		free(var->str);
 		var->i = -1;
 		var->j = 0;
 		ft_pipex(var);
@@ -80,7 +83,7 @@ int main(int argc, char **argv, char *env[])
 			perror("");
 			exit(1);
 		}
-		var->fd = open(argv[4], O_RDWR | O_CREAT, 0755);
+		var->fd = open(argv[4], O_RDWR | O_CREAT | O_TRUNC, 0755);
 		var->fd2 = open(argv[1], O_RDONLY);
 		if (var->fd == -1)
 		{
@@ -106,6 +109,7 @@ int main(int argc, char **argv, char *env[])
 
 			var->i = -1;
 			var->j = 0;
+			free_split(var->tab);
 			var->tab = (char **)pipe1->next->content;
 			ft_pipex(var);
 			close(var->p[1]);
@@ -125,10 +129,18 @@ int main(int argc, char **argv, char *env[])
 			close(var->p[0]);
 			wait(0);
 		}
-		free(pipe1);
-		free_split(var->tab);
-		free(var);
+		// free(pipe1->content);
+		// printf("%s\n", var->tmp2[0]);
+		// printf("%s\n", pipe1->content[0]);
+		// if (pipe1->content != NULL)
+		// 	free_split(pipe1->content);
+		printf("tmp[2] : %s\n", var->tmp2[0]);
+		free_split(var->tmp2);
+		free_split(var->tmp3);
 		free_split(var->path);
+		printf("OK\n");
+		free(var);
+		ft_free_list(pipe1);
 	}
 	else
 		write(1, "Invalid number of arguments !\n", 31);
